@@ -1,6 +1,6 @@
 <div class="row">
     @forelse ($list as $item)
-        <div class="col-sm-6">
+        <div class="col-sm-6 mb-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">{{ $item->title }}</h5>
@@ -8,11 +8,13 @@
                     @php
                         $link = null;
                         $name = null;
-                        if($item->file){
-                            $file = json_decode($item->file);
-                            $link = $file[0]->download_link;
-                            $name = $file[0]->original_name;
-                        }
+                            if($item->file){
+                                $file = json_decode($item->file);
+                                if(count($file) > 0){
+                                    $link = $file[0]->download_link;
+                                    $name = $file[0]->original_name;
+                                }
+                            }
                     @endphp
                     <div class="row">
                         <div class="col-md-6">
@@ -20,8 +22,8 @@
                         </div>
                         <div class="col-md-6">
                             <p class="text-muted text-right">
-                                Promulgado {{ date('d/M/Y', strtotime($item->enact_date)) }} <br>
-                                <small>{{ \Carbon\Carbon::parse($item->enact_date)->diffForHumans() }}</small>
+                                Registrado {{ date('d/M/Y', strtotime($item->publish_date)) }} <br>
+                                <small>{{ \Carbon\Carbon::parse($item->publish_date)->diffForHumans() }}</small>
                             </p>                            
                         </div>
                     </div>

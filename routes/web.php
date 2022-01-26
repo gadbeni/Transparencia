@@ -20,16 +20,12 @@ Route::get('login', function () {
     return redirect('admin/login');
 })->name('login');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
+Route::get('search/{year}/{value?}', [HomeController::class, 'list']);
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
-
-Route::get('/{slug}', [HomeController::class, 'types_index']);
-Route::get('/{type_id}/search/{value?}', [HomeController::class, 'types_list']);
 
 // Clear cache
 Route::get('/admin/clear-cache', function() {

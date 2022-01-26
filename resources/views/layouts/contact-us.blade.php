@@ -4,7 +4,7 @@
 
       <div class="section-title">
         <h2>Contacto</h2>
-        <h3><span>Contáctanos</span></h3>
+        <h3>Contáctate <span>Con Nosotros</span></h3>
         <p>Puedes ponerte en contácto con nosotros mediante cualquiera de los canales de comunicación descritos a continuación.</p>
       </div>
 

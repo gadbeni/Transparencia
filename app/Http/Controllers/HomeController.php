@@ -10,21 +10,17 @@ use App\Models\Publication;
 
 class HomeController extends Controller
 {
-    public function types_index($slug){
-        $type = PublicationsType::where('slug', $slug)->where('deleted_at', NULL)->first();
-        $last_item = Publication::where('publications_type_id', $type->id)->first();
-        if($type){
-            return view('types-browse', compact('type', 'last_item'));
-        }else{
-            return redirect('/');
-        }
+    public function index(){
+        $years = Publication::where('deleted_at', NULL)
+                    ->groupByRaw('YEAR(publish_date)')->selectRaw('YEAR(publish_date) as year, COUNT(id) as count')->get();
+        return view('welcome', compact('years'));
     }
 
-    public function types_list($type_id, $search = null){
+    public function list($year, $search = null){
         $query_search = $search ? '(title like "%'.$search.'%" or tags like "%'.$search.'%" or description like "%'.$search.'%")' : 1;
-        $list = Publication::where('publications_type_id', $type_id)
-                    ->whereRaw($query_search)
+        $list = Publication::whereRaw($query_search)
+                    ->whereYear('publish_date', $year)
                     ->where('deleted_at', NULL)->paginate(10);
-        return view('types-list', compact('list'));
+        return view('list', compact('list'));
     }
 }

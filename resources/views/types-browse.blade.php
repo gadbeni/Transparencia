@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-md-4">
           <div class="card">
-            <img class="card-img-top" src="{{ $type->image ? asset('storage/'.$type->image) : asset('images/site-banner.jpg') }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ $type->image ? asset('storage/'.$type->image) : asset('images/site-banner.jpeg') }}" alt="Card image cap">
           </div>
         </div>
         <div class="col-md-8">

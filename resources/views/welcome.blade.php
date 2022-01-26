@@ -5,7 +5,7 @@
   @php
     $site_banner = Voyager::setting('site.banner', '');
   @endphp
-  <section id="hero" class="d-flex align-items-center" style='background: url("{{ $site_banner ? Voyager::image($site_banner) : asset('images/site-banner.jpg') }}") top left;'>
+  <section id="hero" class="d-flex align-items-center" style='background: url("{{ $site_banner ? Voyager::image($site_banner) : asset('images/site-banner.jpeg') }}") top left;'>
     <div class="container" data-aos="zoom-out" data-aos-delay="100">
       <h1 class="text-white">Bienvenido a <span>{{ setting('site.title') }}</span></h1>
       <h2 class="text-white">{{ setting('site.description') }}</h2>
@@ -19,83 +19,33 @@
   <main id="main">
 
     <!-- ======= Featured Services Section ======= -->
-    <section id="featured-services" class="featured-services">
+    <section id="featured-services" class="featured-services" style="margin-bottom: 100px">
       <div class="container" data-aos="fade-up">
 
-        <div class="row">
-            @foreach (App\Models\PublicationsType::where('deleted_at', NULL)->limit(4)->get() as $item)
-                <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0 card-item-link" data-slug="{{ $item->slug }}">
-                  <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
-                    <div class="icon"><i class="bi bi-{{ $item->icon }}"></i></div>
-                    <h4 class="title"><a href="">{{ $item->title }}</a></h4>
-                    <p class="description">{{ $item->description }}</p>
-                  </div>
-                </div>
-            @endforeach
-        </div>
-
-      </div>
-    </section><!-- End Featured Services Section -->
-
-    <!-- ======= About Section ======= -->
-    <section id="about" class="about section-bg">
-      <div class="container" data-aos="fade-up">
-
-        <div class="section-title">
-          <h2>Acerca de</h2>
-          <h3>Conoce más <span>acerca de nosotros</span></h3>
-          <p>A continuación te mostramos un breve resumen de las actividades que llevamos a cabo.</p>
+        <div class="section-title" style="margin-bottom: 50px">
+          <h2>Informes</h2>
+          <h3>Informes <span>Ejecutivos</span></h3>
+          <p>Informes de auditoría general de todas las gestiones</p>
         </div>
 
         <div class="row">
-          <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
-            <img src="{{ asset('images/site-about.jpg') }}" class="img-fluid" alt="">
-          </div>
-          <div class="col-lg-6 pt-4 pt-lg-0 content d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="100">
-            <h3>GACETA JURIDICA DEPARTAMENTAL</h3>
-            <p>
-              Es el instrumento informativo que tiene por objeto publicar de manera permanente las Leyes Departamentales, Decretos Departamentales y de Gobernación, Resoluciones de Gobernación y Administrativas y sobre todo cualquier otro documento de carácter general que emita el Gobierno Autónomo Deoartamental del Beni.
-            </p>
-            <ul>
-              <li>
-                <i class="bx bx-store-alt"></i>
-                <div>
-                  <h5>MISIÓN</h5>
-                  <p>Custodiar y salvaguardar cronológica y oportunamente en la Gaceta Oficial las Leyes Decretos y Resoluciones que emita el Ejecutivo Departamental del Beni.</p>
-                </div>
-              </li>
-              <li>
-                <i class="bx bx-images"></i>
-                <div>
-                  <h5>VISIÓN</h5>
-                  <p>Constituirse en el órgano oficial de publicación y difusión de toda la normativa emitida por el Ejecutivo  Departamental.</p>
-                </div>
-              </li>
+          <div class="col-md-3">
+            <ul class="list-group">
+              @foreach ($years as $item)
+                <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-{{ $item->year }} @if($item->year == date('Y')) active-item @endif" data-year="{{ $item->year }}" style="cursor: pointer">
+                  <a href="#" class="a-year" data-year="{{ $item->year }}">{{ $item->year }}</a>
+                  <span class="badge rounded-pill bg-success">{{ $item->count }}</span>
+                </li>
+              @endforeach
             </ul>
           </div>
+
+          <div class="col-md-9">
+            <div id="list-details"></div>
+          </div>
         </div>
-
       </div>
-    </section><!-- End About Section -->
-
-    <!-- ======= Counts Section ======= -->
-    <section id="counts" class="counts">
-      <div class="container" data-aos="fade-up">
-
-        <div class="row">
-            @foreach (App\Models\PublicationsType::with('publications')->where('deleted_at', NULL)->limit(4)->get() as $item)
-                <div class="col-lg-3 col-md-6">
-                    <div class="count-box">
-                        <i class="bi bi-{{ $item->icon }}"></i>
-                        <span data-purecounter-start="0" data-purecounter-end="{{ count($item->publications) }}" data-purecounter-duration="1" class="purecounter"></span>
-                        <p>{{ $item->title }}</p>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-      </div>
-    </section><!-- End Counts Section -->
+    </section><!-- End Featured Services Section -->
 
     <!-- ======= Testimonials Section ======= -->
     <section id="testimonials" class="testimonials" style='background: url("{{ setting('site.background') ? Voyager::image(setting('site.background')) : asset('images/site-background.jpg') }}") no-repeat;'>
@@ -160,13 +110,47 @@
   </main><!-- End #main -->
 @endsection
 
+@section('css')
+  <style>
+    .active-item{
+      color: #fff !important;
+      background-color: #EAECEE !important;
+    }
+  </style>
+@endsection
+
 @section('script')
   <script>
     $(document).ready(function(){
+      let date = new Date();
+      getList(date.getFullYear());
       $('.card-item-link').click(function(){
         let slug = $(this).data('slug');
         window.location = "{{ url('') }}/"+slug;
       });
+
+      $('.list-group-item').click(function(){
+        let year = $(this).data('year');
+        getList(year);
+        $('.list-group-item').removeClass('active-item');
+        $(this).addClass('active-item');
+      });
+      $('.a-year').click(function(e){
+        e.preventDefault();
+        let year = $(this).data('year');
+        getList(year);
+        $('.list-group-item').removeClass('active-item');
+        $(`.list-group-item-${year}`).addClass('active-item');
+      });
     });
+
+    function getList(year, page = 1){
+      let search = $('#form-search input[name="search"]').val();
+      let url = "{{ url('') }}";
+      console.log(`${url}/search/${search}?page=${page}`)
+      $.get(`${url}/search/${year}/${search ? search : ''}?page=${page}`, function(res){
+        $('#list-details').html(res);
+      });
+    }
   </script>
 @endsection
